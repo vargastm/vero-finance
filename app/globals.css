@@ -2,11 +2,11 @@
 
 @theme {
   --color-brand-1: #f9c438;
-  --color-brand-5: #050b12;
+  --color-brand-5: #080d15;
 }
 
 :root {
-  --background: #050b12;
+  --background: #080d15;
   --foreground: #ededed;
 }
 

@@ -39,7 +39,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
           modalSize="compact"
           theme={darkTheme({
             accentColor: '#f9c438',
-            accentColorForeground: '#050b12',
+            accentColorForeground: '#080d15',
             borderRadius: 'large',
           })}
           appInfo={{
