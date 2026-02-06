@@ -9,6 +9,11 @@ import { Providers } from './providers'
 export const metadata: Metadata = {
   title: 'Vero Finance',
   description: 'International payments for importers and exporters',
+  icons: {
+    icon: '/icon.png',
+    shortcut: '/icon.png',
+    apple: '/icon.png',
+  },
 }
 
 export default function RootLayout({
