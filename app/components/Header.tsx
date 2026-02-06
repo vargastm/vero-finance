@@ -1,6 +1,19 @@
+'use client'
+
+import { LogOut } from 'lucide-react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
+
+import { clearUserData } from '../lib/user'
 
 export function Header() {
+  const router = useRouter()
+
+  const handleLogout = () => {
+    clearUserData()
+    router.push('/welcome')
+  }
+
   return (
     <header className="border-b border-white/20 bg-[#080d15] backdrop-blur-sm">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
@@ -21,6 +34,13 @@ export function Header() {
             />
           </svg>
         </Link>
+        <button
+          onClick={handleLogout}
+          className="flex items-center justify-center rounded-lg p-2 text-white/70 transition-colors hover:bg-white/10 hover:text-white"
+          aria-label="Exit"
+        >
+          <LogOut className="h-5 w-5" />
+        </button>
       </div>
     </header>
   )
