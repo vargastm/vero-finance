@@ -67,29 +67,29 @@ export default function WelcomePage() {
 
       {/* Hero Section with Gradient */}
       <div className="relative z-10 mx-auto flex w-full max-w-lg flex-1 flex-col lg:max-w-7xl lg:px-8">
-        <div className="relative flex flex-1 flex-col justify-between px-6 pb-8 pt-12">
+        <div className="relative flex flex-1 flex-col justify-between px-6 pb-8 pt-12 lg:justify-center">
           {/* Content area */}
-          <div className="flex flex-1 flex-col items-center justify-start">
+          <div className="flex flex-1 flex-col items-center justify-start lg:justify-center lg:gap-6">
             {/* Logo - always visible, never changes */}
-            <div className="mb-12 flex h-64 w-64 items-center justify-center rounded-full bg-linear-to-br from-brand-1/20 via-brand-1/15 to-brand-1/10 backdrop-blur-sm">
-              <div className="flex h-48 w-48 items-center justify-center rounded-full bg-linear-to-br from-brand-1/30 to-brand-1/20">
+            <div className="mb-12 flex h-64 w-64 items-center justify-center rounded-full bg-linear-to-br from-brand-1/20 via-brand-1/15 to-brand-1/10 backdrop-blur-sm lg:mb-6 lg:h-48 lg:w-48">
+              <div className="flex h-48 w-48 items-center justify-center rounded-full bg-linear-to-br from-brand-1/30 to-brand-1/20 lg:h-36 lg:w-36">
                 <img
                   src="https://pbs.twimg.com/profile_images/2014568638636871680/-PGdE3kH_400x400.jpg"
                   alt="Vero Finance"
-                  className="h-32 w-32 rounded-full object-cover"
+                  className="h-32 w-32 rounded-full object-cover lg:h-24 lg:w-24"
                 />
               </div>
             </div>
 
             {/* Content area below logo - text and form share the same space */}
             <div
-              className="relative w-full max-w-md"
+              className="relative w-full max-w-md lg:min-h-0"
               style={{ minHeight: '180px' }}
             >
               {/* Welcome text section */}
               {!showForm && (
-                <div className="absolute inset-0 flex flex-col items-center justify-center transition-opacity duration-500">
-                  <h1 className="mb-4 text-center text-3xl font-bold leading-tight text-white sm:text-4xl">
+                <div className="absolute inset-0 flex flex-col items-center justify-center transition-opacity duration-500 lg:relative lg:inset-auto lg:flex lg:flex-col lg:items-center lg:justify-center">
+                  <h1 className="mb-4 text-center text-3xl font-bold leading-tight text-white sm:text-4xl lg:mb-2">
                     A financial world
                     <br />
                     without complexities
@@ -160,20 +160,20 @@ export default function WelcomePage() {
                 </div>
               )}
             </div>
-          </div>
 
-          {/* Bottom section with CTA - maintain space to prevent layout shift */}
-          {!showForm && (
-            <div className="mt-8 h-[60px]">
-              <button
-                type="button"
-                onClick={handleStart}
-                className="flex w-full items-center justify-center rounded-2xl bg-brand-1 px-6 py-4 text-base font-semibold text-brand-5 transition-all hover:opacity-90 hover:shadow-lg hover:shadow-brand-1/20 active:scale-[0.98]"
-              >
-                Get Started
-              </button>
-            </div>
-          )}
+            {/* Bottom section with CTA - maintain space to prevent layout shift */}
+            {!showForm && (
+              <div className="mt-8 h-[60px] lg:mt-4 lg:h-auto">
+                <button
+                  type="button"
+                  onClick={handleStart}
+                  className="flex w-full items-center justify-center rounded-2xl bg-brand-1 px-6 py-4 text-base font-semibold text-brand-5 transition-all hover:opacity-90 hover:shadow-lg hover:shadow-brand-1/20 active:scale-[0.98]"
+                >
+                  Get Started
+                </button>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </main>
