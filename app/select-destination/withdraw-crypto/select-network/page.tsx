@@ -6,6 +6,7 @@ import { useState } from 'react'
 import { useAccount } from 'wagmi'
 
 import { BackButton } from '@/app/components/BackButton'
+import { useBalance } from '@/app/contexts/BalanceContext'
 
 const NETWORKS = [
   {
@@ -38,8 +39,6 @@ const NETWORKS = [
   },
 ] as const
 
-const AVAILABLE_BALANCE_USDC = 1250.5
-
 function formatBalance(value: number) {
   return new Intl.NumberFormat('en-US', {
     minimumFractionDigits: 2,
@@ -50,6 +49,7 @@ function formatBalance(value: number) {
 export default function SelectNetworkPage() {
   const router = useRouter()
   const { isConnected } = useAccount()
+  const { balance } = useBalance()
   const [selectedNetwork, setSelectedNetwork] = useState<string>('ethereum')
   const [amount, setAmount] = useState('')
 
@@ -65,10 +65,10 @@ export default function SelectNetworkPage() {
 
   const selected = NETWORKS.find((n) => n.id === selectedNetwork)
   const amountNum = parseFloat(amount) || 0
-  const isValidAmount = amountNum > 0 && amountNum <= AVAILABLE_BALANCE_USDC
+  const isValidAmount = amountNum > 0 && amountNum <= balance
 
   const handleMax = () => {
-    setAmount(String(AVAILABLE_BALANCE_USDC.toFixed(2)))
+    setAmount(String(balance.toFixed(2)))
   }
 
   const handleContinue = () => {
@@ -120,7 +120,7 @@ export default function SelectNetworkPage() {
       <section className="rounded-2xl border border-white/10 bg-white/5 p-5 sm:p-6">
         <p className="text-sm text-white/60">Available balance</p>
         <p className="mt-1 text-2xl font-semibold text-white sm:text-3xl">
-          {formatBalance(AVAILABLE_BALANCE_USDC)} USDC
+          {formatBalance(balance)} USDC
         </p>
       </section>
 
@@ -150,7 +150,7 @@ export default function SelectNetworkPage() {
               Max
             </button>
           </div>
-          {amountNum > AVAILABLE_BALANCE_USDC && (
+          {amountNum > balance && (
             <p className="text-sm text-red-400">
               Amount exceeds available balance.
             </p>

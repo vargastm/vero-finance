@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 
 import { BackButton } from '@/app/components/BackButton'
+import { useBalance } from '@/app/contexts/BalanceContext'
 
 const FIAT_CURRENCIES = [
   {
@@ -37,8 +38,6 @@ const FIAT_CURRENCIES = [
   },
 ] as const
 
-const AVAILABLE_BALANCE_USDC = 1250.5
-
 function formatBalance(value: number) {
   return new Intl.NumberFormat('en-US', {
     minimumFractionDigits: 2,
@@ -48,12 +47,13 @@ function formatBalance(value: number) {
 
 export default function BankTransferPage() {
   const router = useRouter()
+  const { balance } = useBalance()
   const [selectedCurrency, setSelectedCurrency] = useState<string>('USD')
   const [amount, setAmount] = useState('')
 
   const selected = FIAT_CURRENCIES.find((c) => c.code === selectedCurrency)
   const balanceInSelectedCurrency = selected
-    ? AVAILABLE_BALANCE_USDC * selected.rateFromUsdc
+    ? balance * selected.rateFromUsdc
     : 0
   const amountNum = parseFloat(amount) || 0
   const isValidAmount = amountNum > 0 && amountNum <= balanceInSelectedCurrency
@@ -119,7 +119,7 @@ export default function BankTransferPage() {
             : '—'}
         </p>
         <p className="mt-1 text-xs text-white/50">
-          ≈ {formatBalance(AVAILABLE_BALANCE_USDC)} USDC
+          ≈ {formatBalance(balance)} USDC
         </p>
       </section>
 
