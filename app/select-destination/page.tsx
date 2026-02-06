@@ -1,6 +1,6 @@
 'use client'
 
-import { ChevronRight, Coins, Landmark } from 'lucide-react'
+import { ChevronRight, Landmark, Wallet } from 'lucide-react'
 import Link from 'next/link'
 
 import { BackButton } from '@/app/components/BackButton'
@@ -22,16 +22,16 @@ export default function SelectDestinationPage() {
 
       <div className="flex flex-1 flex-col gap-4">
         <Link
-          href="/select-destination/deposit-crypto"
+          href="/select-destination/withdraw-crypto/connect-wallet"
           className="group flex items-center gap-4 rounded-2xl border border-white/10 bg-white/5 p-5 transition-colors hover:border-white/20 hover:bg-white/8 sm:p-6"
         >
           <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-brand-1/20 text-brand-1 transition-colors group-hover:bg-brand-1/30">
-            <Coins className="h-6 w-6" aria-hidden />
+            <Wallet className="h-6 w-6" aria-hidden />
           </div>
           <div className="min-w-0 flex-1">
-            <h2 className="font-medium text-white">Deposit Cryptocurrency</h2>
+            <h2 className="font-medium text-white">Withdraw Cryptocurrency</h2>
             <p className="mt-0.5 text-sm text-white/60">
-              Receive funds to your crypto wallet
+              Send funds to your crypto wallet
             </p>
           </div>
           <ChevronRight
