@@ -70,7 +70,7 @@ export default function BankTransferPage() {
   }
 
   return (
-    <main className="mx-auto flex min-h-[calc(100vh-4rem)] max-w-lg flex-col gap-6 px-4 pb-8 pt-6 sm:px-6">
+    <main className="mx-auto flex min-h-[calc(100vh-4rem)] max-w-lg flex-col gap-6 px-4 pb-8 pt-6 sm:px-6 lg:max-w-7xl lg:px-8">
       <div>
         <div className="mb-4 flex items-center gap-3">
           <BackButton href="/select-destination" />

@@ -80,7 +80,7 @@ function ConfirmWithdrawContent() {
   if (typeof window !== 'undefined' && !isConnected) {
     router.push('/select-destination/withdraw-crypto/connect-wallet')
     return (
-      <main className="mx-auto flex min-h-[calc(100vh-4rem)] max-w-lg flex-col gap-6 px-4 pb-8 pt-6 sm:px-6">
+      <main className="mx-auto flex min-h-[calc(100vh-4rem)] max-w-lg flex-col gap-6 px-4 pb-8 pt-6 sm:px-6 lg:max-w-7xl lg:px-8">
         <div className="h-8 w-32 animate-pulse rounded bg-white/10" />
       </main>
     )
@@ -93,7 +93,7 @@ function ConfirmWithdrawContent() {
 
   if (!network || !networkId || !address || amount === null) {
     return (
-      <main className="mx-auto flex min-h-[calc(100vh-4rem)] max-w-lg flex-col gap-6 px-4 pb-8 pt-6 sm:px-6">
+      <main className="mx-auto flex min-h-[calc(100vh-4rem)] max-w-lg flex-col gap-6 px-4 pb-8 pt-6 sm:px-6 lg:max-w-7xl lg:px-8">
         <div className="mb-4">
           <BackButton href="/select-destination/withdraw-crypto/select-network" />
         </div>
@@ -195,7 +195,7 @@ function ConfirmWithdrawContent() {
   }
 
   return (
-    <main className="mx-auto flex min-h-[calc(100vh-4rem)] max-w-lg flex-col gap-6 px-4 pb-8 pt-6 sm:px-6">
+    <main className="mx-auto flex min-h-[calc(100vh-4rem)] max-w-lg flex-col gap-6 px-4 pb-8 pt-6 sm:px-6 lg:max-w-7xl lg:px-8">
       <div>
         <div className="mb-4 flex items-center gap-3">
           <BackButton href="/select-destination/withdraw-crypto/select-network" />

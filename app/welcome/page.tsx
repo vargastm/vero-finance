@@ -66,7 +66,7 @@ export default function WelcomePage() {
       <div className="fixed inset-0 bg-linear-to-br from-brand-1/10 via-brand-1/5 to-transparent" />
 
       {/* Hero Section with Gradient */}
-      <div className="relative z-10 mx-auto flex w-full max-w-lg flex-1 flex-col">
+      <div className="relative z-10 mx-auto flex w-full max-w-lg flex-1 flex-col lg:max-w-7xl lg:px-8">
         <div className="relative flex flex-1 flex-col justify-between px-6 pb-8 pt-12">
           {/* Content area */}
           <div className="flex flex-1 flex-col items-center justify-start">

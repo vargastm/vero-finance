@@ -29,7 +29,7 @@ export default function ConnectWalletPage() {
   }
 
   return (
-    <main className="mx-auto flex min-h-[calc(100vh-4rem)] max-w-lg flex-col px-4 pb-8 pt-6 sm:px-6">
+    <main className="mx-auto flex min-h-[calc(100vh-4rem)] max-w-lg flex-col px-4 pb-8 pt-6 sm:px-6 lg:max-w-7xl lg:px-8">
       <div>
         <div className="mb-6 flex items-center gap-3">
           <BackButton href="/select-destination" />

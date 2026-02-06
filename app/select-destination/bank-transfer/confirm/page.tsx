@@ -63,7 +63,7 @@ function ConfirmWithdrawContent() {
 
   if (!currency || !currencyCode || amount === null) {
     return (
-      <main className="mx-auto flex min-h-[calc(100vh-4rem)] max-w-lg flex-col gap-6 px-4 pb-8 pt-6 sm:px-6">
+      <main className="mx-auto flex min-h-[calc(100vh-4rem)] max-w-lg flex-col gap-6 px-4 pb-8 pt-6 sm:px-6 lg:max-w-7xl lg:px-8">
         <div className="mb-4">
           <BackButton href="/select-destination/bank-transfer" />
         </div>
@@ -146,7 +146,7 @@ function ConfirmWithdrawContent() {
   }
 
   return (
-    <main className="mx-auto flex min-h-[calc(100vh-4rem)] max-w-lg flex-col gap-6 px-4 pb-8 pt-6 sm:px-6">
+    <main className="mx-auto flex min-h-[calc(100vh-4rem)] max-w-lg flex-col gap-6 px-4 pb-8 pt-6 sm:px-6 lg:max-w-7xl lg:px-8">
       <div>
         <div className="mb-4 flex items-center gap-3">
           <BackButton href="/select-destination/bank-transfer" />
@@ -251,7 +251,7 @@ export default function ConfirmWithdrawPage() {
   return (
     <Suspense
       fallback={
-        <main className="mx-auto flex min-h-[calc(100vh-4rem)] max-w-lg flex-col gap-6 px-4 pb-8 pt-6 sm:px-6">
+        <main className="mx-auto flex min-h-[calc(100vh-4rem)] max-w-lg flex-col gap-6 px-4 pb-8 pt-6 sm:px-6 lg:max-w-7xl lg:px-8">
           <div className="h-8 w-32 animate-pulse rounded bg-white/10" />
           <div className="h-10 w-3/4 animate-pulse rounded bg-white/10" />
         </main>
