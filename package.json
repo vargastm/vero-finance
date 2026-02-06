@@ -21,6 +21,9 @@
     "viem": "^2.45.1",
     "wagmi": "^2.19.5"
   },
+  "overrides": {
+    "use-sync-external-store": "1.4.0"
+  },
   "devDependencies": {
     "@eslint/js": "^9.39.2",
     "@tailwindcss/postcss": "^4",
