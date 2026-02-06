@@ -10,7 +10,7 @@ interface BackButtonProps {
 export function BackButton({
   href,
   className = '',
-  'aria-label': ariaLabel = 'Voltar',
+  'aria-label': ariaLabel = 'Back',
 }: BackButtonProps) {
   return (
     <Link
