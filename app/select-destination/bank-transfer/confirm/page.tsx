@@ -1,8 +1,8 @@
 'use client'
 
 import Link from 'next/link'
-import { useSearchParams } from 'next/navigation'
-import { Suspense, useMemo } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
+import { Suspense, useMemo, useState } from 'react'
 
 import { BackButton } from '@/app/components/BackButton'
 
@@ -33,6 +33,7 @@ const DEFAULT_DESTINATION = {
 }
 
 function ConfirmWithdrawContent() {
+  const router = useRouter()
   const searchParams = useSearchParams()
   const currencyCode = searchParams.get('currency')
   const amountParam = searchParams.get('amount')
@@ -79,10 +80,64 @@ function ConfirmWithdrawContent() {
   const feeAmount = (amount * currency.offrampFeePercent) / 100
   const receiveAmount = amount - feeAmount
 
-  const handleConfirm = () => {
-    alert(
-      `Withdrawal confirmed: ${formatAmount(amount)} ${currencyCode}. (API integration coming soon)`,
-    )
+  const [isSendingCode, setIsSendingCode] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+
+  const userEmail = searchParams.get('email') || ''
+
+  const handleSendCode = async () => {
+    setIsSendingCode(true)
+    setError(null)
+
+    try {
+      const response = await fetch('/api/send-withdraw-email', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          amount,
+          currencyCode,
+          currencySymbol: currency.symbol,
+          feeAmount,
+          receiveAmount,
+          bankName: destination.bankName,
+          accountHolder: destination.accountHolder,
+          agency: destination.agency,
+          account: destination.account,
+          userEmail,
+        }),
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to send confirmation code')
+      }
+
+      // Redirect to confirmation code page
+      const params = new URLSearchParams({
+        email: userEmail,
+        amount: amount.toString(),
+        currencyCode,
+        currencySymbol: currency.symbol,
+        feeAmount: feeAmount.toString(),
+        receiveAmount: receiveAmount.toString(),
+        bankName: destination.bankName,
+        accountHolder: destination.accountHolder,
+        agency: destination.agency,
+        account: destination.account,
+      })
+
+      router.push(
+        `/select-destination/bank-transfer/confirm/code?${params.toString()}`,
+      )
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Error sending code')
+      console.error('Error sending code:', err)
+    } finally {
+      setIsSendingCode(false)
+    }
   }
 
   return (
@@ -167,13 +222,20 @@ function ConfirmWithdrawContent() {
         </dl>
       </section>
 
+      {error && (
+        <div className="rounded-xl border border-red-500/50 bg-red-500/10 p-4">
+          <p className="text-sm text-red-400">{error}</p>
+        </div>
+      )}
+
       <div className="mt-auto pt-4">
         <button
           type="button"
-          onClick={handleConfirm}
-          className="flex w-full items-center justify-center rounded-[27px] bg-brand-1 px-4 py-3.5 text-sm font-medium text-brand-5 transition-opacity hover:opacity-90"
+          onClick={handleSendCode}
+          disabled={isSendingCode}
+          className="flex w-full items-center justify-center rounded-[27px] bg-brand-1 px-4 py-3.5 text-sm font-medium text-brand-5 transition-opacity hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          Confirm Withdraw
+          {isSendingCode ? 'Sending code...' : 'Send confirmation code'}
         </button>
       </div>
     </main>
