@@ -1,9 +1,36 @@
 'use client'
 
+import { useRouter } from 'next/navigation'
+import { useEffect, useState } from 'react'
+
 import { BalanceCard } from './components/BalanceCard'
 import { Skeleton } from './components/Skeleton'
+import { hasUserData } from './lib/user'
 
 export default function Home() {
+  const router = useRouter()
+  const [isChecking, setIsChecking] = useState(true)
+
+  useEffect(() => {
+    // Check if user has already filled in their data
+    if (!hasUserData()) {
+      router.push('/welcome')
+    } else {
+      setIsChecking(false)
+    }
+  }, [router])
+
+  // Show loading while checking
+  if (isChecking) {
+    return (
+      <main className="mx-auto flex min-h-[calc(100vh-4rem)] max-w-lg flex-col gap-6 px-4 pb-8 pt-6 sm:px-6">
+        <div className="flex items-center justify-center min-h-[calc(100vh-8rem)]">
+          <Skeleton className="h-8 w-32" />
+        </div>
+      </main>
+    )
+  }
+
   return (
     <main className="mx-auto flex min-h-[calc(100vh-4rem)] max-w-lg flex-col gap-6 px-4 pb-8 pt-6 sm:px-6">
       <BalanceCard />

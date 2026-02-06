@@ -17,6 +17,7 @@ export async function POST(request: Request) {
       agency,
       account,
       userEmail,
+      userName,
     } = body
 
     // Basic validation
@@ -48,7 +49,7 @@ export async function POST(request: Request) {
             <div style="background: #f9f9f9; padding: 30px; border-radius: 0 0 10px 10px; border: 1px solid #e0e0e0;">
               <h2 style="color: #333; margin-top: 0;">Withdrawal Confirmed</h2>
               
-              <p>Hello,</p>
+              <p>Hello${userName ? ` ${userName}` : ''},</p>
               
               <p>Your withdrawal has been successfully confirmed! Below are the transaction details:</p>
               

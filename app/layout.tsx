@@ -3,7 +3,7 @@ import './globals.css'
 import type { Metadata } from 'next'
 import React from 'react'
 
-import { Header } from './components/Header'
+import { ConditionalHeader } from './components/ConditionalHeader'
 
 export const metadata: Metadata = {
   title: 'Vero Finance',
@@ -18,7 +18,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <Header />
+        <ConditionalHeader />
         {children}
       </body>
     </html>

@@ -4,12 +4,15 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { Suspense, useState } from 'react'
 
 import { BackButton } from '@/app/components/BackButton'
+import { getUserData } from '@/app/lib/user'
 
 function ConfirmCodeContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
 
-  const userEmail = searchParams.get('email') || ''
+  const userData = getUserData()
+  const userEmail = userData?.email || ''
+  const firstName = userData?.name?.split(' ')[0] || ''
   const amount = searchParams.get('amount')
   const currencyCode = searchParams.get('currencyCode')
 
@@ -41,6 +44,7 @@ function ConfirmCodeContent() {
           agency: searchParams.get('agency') || '',
           account: searchParams.get('account') || '',
           userEmail,
+          userName: firstName,
         }),
       })
 
@@ -65,7 +69,10 @@ function ConfirmCodeContent() {
   }
 
   const handleConfirmWithdraw = async () => {
-    if (!confirmationCode || confirmationCode.length !== 6) {
+    // Normalize code - remove any non-numeric characters
+    const normalizedCode = confirmationCode.replace(/\D/g, '').trim()
+
+    if (!normalizedCode || normalizedCode.length !== 6) {
       setError('Please enter a 6-digit code')
       return
     }
@@ -80,7 +87,7 @@ function ConfirmCodeContent() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          code: confirmationCode,
+          code: normalizedCode,
           email: userEmail,
         }),
       })
@@ -112,6 +119,7 @@ function ConfirmCodeContent() {
             agency: searchParams.get('agency') || '',
             account: searchParams.get('account') || '',
             userEmail,
+            userName: firstName,
           }),
         })
       } catch (emailError) {

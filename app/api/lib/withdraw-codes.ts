@@ -10,7 +10,16 @@ interface WithdrawCode {
   attempts: number
 }
 
-const codes = new Map<string, WithdrawCode>()
+// Use globalThis to ensure persistence across hot reloads in development
+declare global {
+  var __withdrawCodes: Map<string, WithdrawCode> | undefined
+}
+
+const codes = globalThis.__withdrawCodes ?? new Map<string, WithdrawCode>()
+
+if (!globalThis.__withdrawCodes) {
+  globalThis.__withdrawCodes = codes
+}
 
 const CODE_EXPIRY_MINUTES = 10 // Code expires in 10 minutes
 const MAX_ATTEMPTS = 3 // Maximum of 3 attempts
@@ -30,20 +39,27 @@ export function createWithdrawCode(
   amount: number,
   currencyCode: string,
 ): string {
-  const code = generateConfirmationCode()
+  let code = generateConfirmationCode()
+  // Ensure code is exactly 6 digits (should already be, but just in case)
+  code = code.replace(/\D/g, '').slice(0, 6).padStart(6, '0')
+
   const now = Date.now()
   const expiresAt = now + CODE_EXPIRY_MINUTES * 60 * 1000
 
-  // Remove old codes from the same email
+  // Normalize email
+  const normalizedEmail = email.trim().toLowerCase()
+
+  // Remove old codes from the same email (normalize for comparison)
   for (const [key, value] of codes.entries()) {
-    if (value.email === email) {
+    const storedEmailNormalized = value.email.trim().toLowerCase()
+    if (storedEmailNormalized === normalizedEmail) {
       codes.delete(key)
     }
   }
 
   const withdrawCode: WithdrawCode = {
     code,
-    email,
+    email: email.trim().toLowerCase(), // Normalize email storage
     amount,
     currencyCode,
     createdAt: now,
@@ -71,13 +87,24 @@ export function validateWithdrawCode(
   code: string,
   email: string,
 ): { valid: boolean; error?: string; withdrawData?: WithdrawCode } {
+  // Normalize inputs - remove any non-numeric characters and trim
+  code = code.replace(/\D/g, '').trim()
+  email = email.trim().toLowerCase()
+
+  // Check if code is exactly 6 digits
+  if (code.length !== 6) {
+    return { valid: false, error: 'Code must be 6 digits' }
+  }
+
   const withdrawCode = codes.get(code)
 
   if (!withdrawCode) {
     return { valid: false, error: 'Invalid code' }
   }
 
-  if (withdrawCode.email !== email) {
+  // Normalize stored email for comparison
+  const storedEmail = withdrawCode.email.trim().toLowerCase()
+  if (storedEmail !== email) {
     return { valid: false, error: 'Code does not match email' }
   }
 
@@ -110,3 +137,4 @@ export function cleanupExpiredCodes(): void {
     }
   }
 }
+

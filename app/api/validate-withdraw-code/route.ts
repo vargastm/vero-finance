@@ -5,7 +5,11 @@ import { validateWithdrawCode } from '../lib/withdraw-codes'
 export async function POST(request: Request) {
   try {
     const body = await request.json()
-    const { code, email } = body
+    let { code, email } = body
+
+    // Trim whitespace
+    code = typeof code === 'string' ? code.trim() : code
+    email = typeof email === 'string' ? email.trim().toLowerCase() : email
 
     // Basic validation
     if (!code || !email) {

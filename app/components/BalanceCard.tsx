@@ -33,7 +33,7 @@ const CURRENCIES = [
   },
 ] as const
 
-function formatBalance(value: number, locale: string = 'pt-BR') {
+function formatBalance(value: number, locale: string = 'en-US') {
   return new Intl.NumberFormat(locale, {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,

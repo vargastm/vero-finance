@@ -19,6 +19,7 @@ export async function POST(request: Request) {
       agency,
       account,
       userEmail,
+      userName,
     } = body
 
     // Basic validation
@@ -34,7 +35,7 @@ export async function POST(request: Request) {
 
     // Send email using Resend
     const { data, error } = await resend.emails.send({
-      from: 'Vero Finance <onboarding@resend.dev>', // You will need to configure your domain in Resend
+      from: 'Vero Finance <onboarding@resend.dev>',
       to: [userEmail],
       subject: `Confirmation Code - Withdrawal ${currencySymbol}${amount} ${currencyCode}`,
       html: `
@@ -53,7 +54,7 @@ export async function POST(request: Request) {
             <div style="background: #f9f9f9; padding: 30px; border-radius: 0 0 10px 10px; border: 1px solid #e0e0e0;">
               <h2 style="color: #333; margin-top: 0;">Confirmation Code</h2>
               
-              <p>Hello,</p>
+              <p>Hello${userName ? ` ${userName}` : ''},</p>
               
               <p>You requested a withdrawal of <strong>${currencySymbol}${amount.toFixed(2)} ${currencyCode}</strong>.</p>
               

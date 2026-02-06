@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { Suspense, useMemo, useState } from 'react'
 
 import { BackButton } from '@/app/components/BackButton'
+import { getUserData } from '@/app/lib/user'
 
 const FIAT_CURRENCIES: Record<
   string,
@@ -27,7 +28,7 @@ function formatAmount(value: number) {
 
 const DEFAULT_DESTINATION = {
   bankName: 'Bank of America',
-  accountHolder: 'John Doe',
+  accountHolder: '',
   agency: '0001',
   account: '12345-6',
 }
@@ -47,16 +48,18 @@ function ConfirmWithdrawContent() {
     [currencyCode],
   )
 
-  const destination = useMemo(
-    () => ({
+  const destination = useMemo(() => {
+    const userData = getUserData()
+    const defaultAccountHolder =
+      userData?.name || DEFAULT_DESTINATION.accountHolder
+
+    return {
       bankName: searchParams.get('bankName') ?? DEFAULT_DESTINATION.bankName,
-      accountHolder:
-        searchParams.get('accountHolder') ?? DEFAULT_DESTINATION.accountHolder,
+      accountHolder: searchParams.get('accountHolder') ?? defaultAccountHolder,
       agency: searchParams.get('agency') ?? DEFAULT_DESTINATION.agency,
       account: searchParams.get('account') ?? DEFAULT_DESTINATION.account,
-    }),
-    [searchParams],
-  )
+    }
+  }, [searchParams])
 
   if (!currency || !currencyCode || amount === null) {
     return (
@@ -83,7 +86,9 @@ function ConfirmWithdrawContent() {
   const [isSendingCode, setIsSendingCode] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  const userEmail = searchParams.get('email') || ''
+  const userData = getUserData()
+  const userEmail = userData?.email || ''
+  const firstName = userData?.name?.split(' ')[0] || ''
 
   const handleSendCode = async () => {
     setIsSendingCode(true)
@@ -106,6 +111,7 @@ function ConfirmWithdrawContent() {
           agency: destination.agency,
           account: destination.account,
           userEmail,
+          userName: firstName,
         }),
       })
 
@@ -117,7 +123,6 @@ function ConfirmWithdrawContent() {
 
       // Redirect to confirmation code page
       const params = new URLSearchParams({
-        email: userEmail,
         amount: amount.toString(),
         currencyCode,
         currencySymbol: currency.symbol,
