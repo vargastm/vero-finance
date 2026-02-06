@@ -17,49 +17,6 @@ interface Balance {
   iconColor: string
 }
 
-const BALANCES: Balance[] = [
-  {
-    symbol: 'USDC',
-    name: 'USD Coin',
-    amount: 350.0,
-    usdValue: 350.0,
-    network: 'Solana',
-    iconColor: 'bg-blue-500',
-  },
-  {
-    symbol: 'USDT',
-    name: 'Tether',
-    amount: 200.0,
-    usdValue: 200.0,
-    network: 'Ethereum',
-    iconColor: 'bg-green-500',
-  },
-  {
-    symbol: 'ETH',
-    name: 'Ethereum',
-    amount: 0.12,
-    usdValue: 300.0,
-    network: 'Ethereum',
-    iconColor: 'bg-blue-400',
-  },
-  {
-    symbol: 'BTC',
-    name: 'Bitcoin',
-    amount: 0.0016,
-    usdValue: 104.0,
-    network: 'Bitcoin',
-    iconColor: 'bg-orange-500',
-  },
-  {
-    symbol: 'SOL',
-    name: 'Solana',
-    amount: 1.96,
-    usdValue: 296.0,
-    network: 'Solana',
-    iconColor: 'bg-purple-500',
-  },
-]
-
 function formatBalance(value: number) {
   return new Intl.NumberFormat('en-US', {
     minimumFractionDigits: 2,
@@ -98,8 +55,51 @@ function getCryptoLogoUrl(symbol: string): string {
 }
 
 export default function BalanceDetailsPage() {
-  const { addBalance } = useBalance()
+  const { balance, addBalance } = useBalance()
   const [isBalanceVisible, setIsBalanceVisible] = useState(true)
+
+  const BALANCES: Balance[] = [
+    {
+      symbol: 'USDC',
+      name: 'USD Coin',
+      amount: balance,
+      usdValue: balance,
+      network: 'Solana',
+      iconColor: 'bg-blue-500',
+    },
+    {
+      symbol: 'USDT',
+      name: 'Tether',
+      amount: 0,
+      usdValue: 0,
+      network: 'Ethereum',
+      iconColor: 'bg-green-500',
+    },
+    {
+      symbol: 'ETH',
+      name: 'Ethereum',
+      amount: 0,
+      usdValue: 0,
+      network: 'Ethereum',
+      iconColor: 'bg-blue-400',
+    },
+    {
+      symbol: 'BTC',
+      name: 'Bitcoin',
+      amount: 0,
+      usdValue: 0,
+      network: 'Bitcoin',
+      iconColor: 'bg-orange-500',
+    },
+    {
+      symbol: 'SOL',
+      name: 'Solana',
+      amount: 0,
+      usdValue: 0,
+      network: 'Solana',
+      iconColor: 'bg-purple-500',
+    },
+  ]
 
   const totalUsdValue = BALANCES.reduce(
     (sum, balance) => sum + balance.usdValue,
