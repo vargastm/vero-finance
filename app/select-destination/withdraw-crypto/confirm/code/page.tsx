@@ -4,11 +4,13 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { Suspense, useMemo, useState } from 'react'
 
 import { BackButton } from '@/app/components/BackButton'
+import { useBalance } from '@/app/contexts/BalanceContext'
 import { getUserData } from '@/app/lib/user'
 
 function ConfirmCodeContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
+  const { subtractBalance } = useBalance()
 
   const userData = getUserData()
   const userEmail = userData?.email || ''
@@ -106,6 +108,12 @@ function ConfirmCodeContent() {
 
       // Valid code - send confirmation email and confirm withdrawal
       setWithdrawConfirmed(true)
+
+      // Subtract the withdrawal amount from balance
+      const withdrawalAmount = amount ? parseFloat(amount) : 0
+      if (withdrawalAmount > 0) {
+        subtractBalance(withdrawalAmount)
+      }
 
       // Send confirmation email
       try {

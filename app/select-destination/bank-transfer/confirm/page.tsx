@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { Suspense, useMemo, useState } from 'react'
 
 import { BackButton } from '@/app/components/BackButton'
+import { useBalance } from '@/app/contexts/BalanceContext'
 import { getUserData } from '@/app/lib/user'
 
 const FIAT_CURRENCIES: Record<
@@ -16,8 +17,6 @@ const FIAT_CURRENCIES: Record<
   GBP: { name: 'British Pound', symbol: '£', offrampFeePercent: 0.6 },
   BRL: { name: 'Brazilian Real', symbol: 'R$', offrampFeePercent: 0.8 },
 }
-
-const AVAILABLE_BALANCE = 1250.5
 
 function formatAmount(value: number) {
   return new Intl.NumberFormat('en-US', {
@@ -36,6 +35,7 @@ const DEFAULT_DESTINATION = {
 function ConfirmWithdrawContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
+  const { balance } = useBalance()
   const currencyCode = searchParams.get('currency')
   const amountParam = searchParams.get('amount')
   const amount = useMemo(() => {
@@ -167,7 +167,7 @@ function ConfirmWithdrawContent() {
           <div className="flex justify-between text-sm">
             <dt className="text-white/60">Available balance</dt>
             <dd className="font-medium text-white">
-              {formatAmount(AVAILABLE_BALANCE)} USDC
+              {formatAmount(balance)} USDC
             </dd>
           </div>
           <div className="flex justify-between text-sm">

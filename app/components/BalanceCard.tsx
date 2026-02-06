@@ -4,7 +4,7 @@ import { ChevronDown, Eye, EyeOff } from 'lucide-react'
 import Link from 'next/link'
 import { useState } from 'react'
 
-const AVAILABLE_BALANCE_USDC = 1250.5
+import { useBalance } from '@/app/contexts/BalanceContext'
 
 const CURRENCIES = [
   {
@@ -41,13 +41,14 @@ function formatBalance(value: number, locale: string = 'en-US') {
 }
 
 export function BalanceCard() {
+  const { balance } = useBalance()
   const [isBalanceVisible, setIsBalanceVisible] = useState(true)
   const [selectedCurrency, setSelectedCurrency] = useState<string>('USD')
 
   const selected = CURRENCIES.find((c) => c.code === selectedCurrency)
   const balanceInSelectedCurrency = selected
-    ? AVAILABLE_BALANCE_USDC * selected.rateFromUsdc
-    : AVAILABLE_BALANCE_USDC
+    ? balance * selected.rateFromUsdc
+    : balance
 
   const getLocale = (currencyCode: string) => {
     switch (currencyCode) {

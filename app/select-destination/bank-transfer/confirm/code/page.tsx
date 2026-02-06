@@ -4,11 +4,13 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { Suspense, useState } from 'react'
 
 import { BackButton } from '@/app/components/BackButton'
+import { useBalance } from '@/app/contexts/BalanceContext'
 import { getUserData } from '@/app/lib/user'
 
 function ConfirmCodeContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
+  const { subtractBalance } = useBalance()
 
   const userData = getUserData()
   const userEmail = userData?.email || ''
@@ -92,14 +94,26 @@ function ConfirmCodeContent() {
         }),
       })
 
-      const data = await response.json()
+      let data
+      try {
+        data = await response.json()
+      } catch (jsonError) {
+        throw new Error('Failed to parse server response')
+      }
 
       if (!response.ok) {
-        throw new Error(data.error || 'Invalid code')
+        const errorMessage = data?.error || 'Invalid code'
+        throw new Error(errorMessage)
       }
 
       // Valid code - send confirmation email and confirm withdrawal
       setWithdrawConfirmed(true)
+
+      // Subtract the withdrawal amount from balance
+      const withdrawalAmount = parseFloat(amount || '0')
+      if (withdrawalAmount > 0) {
+        subtractBalance(withdrawalAmount)
+      }
 
       // Send confirmation email
       try {

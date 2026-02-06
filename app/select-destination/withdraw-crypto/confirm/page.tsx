@@ -6,6 +6,7 @@ import { Suspense, useMemo, useState } from 'react'
 import { useAccount } from 'wagmi'
 
 import { BackButton } from '@/app/components/BackButton'
+import { useBalance } from '@/app/contexts/BalanceContext'
 import { getUserData } from '@/app/lib/user'
 
 const NETWORKS: Record<
@@ -43,8 +44,6 @@ const NETWORKS: Record<
   },
 }
 
-const AVAILABLE_BALANCE_USDC = 1250.5
-
 function formatBalance(value: number) {
   return new Intl.NumberFormat('en-US', {
     minimumFractionDigits: 2,
@@ -61,6 +60,7 @@ function ConfirmWithdrawContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const { address, isConnected } = useAccount()
+  const { balance } = useBalance()
   const networkId = searchParams.get('network')
   const amountParam = searchParams.get('amount')
   const [copied, setCopied] = useState(false)
@@ -251,7 +251,7 @@ function ConfirmWithdrawContent() {
           <div className="flex justify-between text-sm">
             <dt className="text-white/60">Available balance</dt>
             <dd className="font-medium text-white">
-              {formatBalance(AVAILABLE_BALANCE_USDC)} USDC
+              {formatBalance(balance)} USDC
             </dd>
           </div>
           <div className="flex justify-between text-sm">

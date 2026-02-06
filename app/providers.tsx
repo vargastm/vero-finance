@@ -13,6 +13,8 @@ import { WagmiProvider } from 'wagmi'
 import { http } from 'wagmi'
 import { arbitrum, base, mainnet, polygon, sepolia } from 'wagmi/chains'
 
+import { BalanceProvider } from './contexts/BalanceContext'
+
 const config = getDefaultConfig({
   appName: 'Vero Finance',
   projectId: 'vero-finance',
@@ -44,7 +46,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
             appName: 'Vero Finance',
           }}
         >
-          {children}
+          <BalanceProvider>{children}</BalanceProvider>
         </RainbowKitProvider>
       </QueryClientProvider>
     </WagmiProvider>
