@@ -1,5 +1,7 @@
 'use client'
 
+import Link from 'next/link'
+
 import { Skeleton } from './components/Skeleton'
 
 export default function Home() {
@@ -16,12 +18,12 @@ export default function Home() {
       </section>
 
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-center">
-        <button
-          type="button"
-          className="flex max-md:w-full max-md:py-3.5 items-center justify-center rounded-[27px] bg-brand-1 p-1.5 pl-4.5 text-sm leading-[1.3] text-brand-5"
+        <Link
+          href="/select-destination"
+          className="flex max-md:w-full max-md:py-3.5 items-center justify-center rounded-[27px] bg-brand-1 p-1.5 pl-4.5 text-sm leading-[1.3] text-brand-5 transition-opacity hover:opacity-90"
         >
           Withdraw Funds
-        </button>
+        </Link>
       </div>
 
       {/* Chart area skeleton */}
