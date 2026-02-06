@@ -41,7 +41,7 @@ function formatBalance(value: number, locale: string = 'en-US') {
 }
 
 export function BalanceCard() {
-  const { balance } = useBalance()
+  const { balance, addBalance } = useBalance()
   const [isBalanceVisible, setIsBalanceVisible] = useState(true)
   const [selectedCurrency, setSelectedCurrency] = useState<string>('USD')
 
@@ -116,12 +116,12 @@ export function BalanceCard() {
         </div>
       </div>
       <div className="flex gap-3">
-        <Link
-          href="/select-destination/deposit-crypto"
+        <button
+          onClick={() => addBalance(1000)}
           className="flex flex-1 items-center justify-center rounded-[27px] bg-brand-1  text-sm leading-[1.3] text-brand-5 transition-opacity hover:opacity-90 max-md:w-full h-10"
         >
           Add funds
-        </Link>
+        </button>
         <Link
           href="/select-destination"
           className="flex flex-1 items-center justify-center rounded-[27px] border border-white/20 bg-white/5 text-sm leading-[1.3] text-white transition-colors hover:bg-white/10 max-md:w-full h-10"

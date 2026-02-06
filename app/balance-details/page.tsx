@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { useState } from 'react'
 
 import { BackButton } from '@/app/components/BackButton'
+import { useBalance } from '@/app/contexts/BalanceContext'
 
 interface Balance {
   symbol: string
@@ -97,6 +98,7 @@ function getCryptoLogoUrl(symbol: string): string {
 }
 
 export default function BalanceDetailsPage() {
+  const { addBalance } = useBalance()
   const [isBalanceVisible, setIsBalanceVisible] = useState(true)
 
   const totalUsdValue = BALANCES.reduce(
@@ -141,12 +143,12 @@ export default function BalanceDetailsPage() {
 
         {/* Action Buttons */}
         <div className="flex gap-2">
-          <Link
-            href="/select-destination/deposit-crypto"
+          <button
+            onClick={() => addBalance(1000)}
             className="flex flex-1 items-center justify-center rounded-[27px] bg-brand-1 text-sm leading-[1.3] text-brand-5 transition-opacity hover:opacity-90 h-10"
           >
             Add funds
-          </Link>
+          </button>
           <Link
             href="/select-destination"
             className="flex flex-1 items-center justify-center rounded-[27px] border border-white/30 bg-gray-800/50 text-sm leading-[1.3] text-white transition-colors hover:bg-gray-800/70 h-10"
