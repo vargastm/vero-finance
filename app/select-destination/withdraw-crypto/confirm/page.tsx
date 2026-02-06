@@ -6,6 +6,7 @@ import { Suspense, useMemo, useState } from 'react'
 import { useAccount } from 'wagmi'
 
 import { BackButton } from '@/app/components/BackButton'
+import { getUserData } from '@/app/lib/user'
 
 const NETWORKS: Record<
   string,
@@ -61,7 +62,19 @@ function ConfirmWithdrawContent() {
   const searchParams = useSearchParams()
   const { address, isConnected } = useAccount()
   const networkId = searchParams.get('network')
+  const amountParam = searchParams.get('amount')
   const [copied, setCopied] = useState(false)
+  const [isSendingCode, setIsSendingCode] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+
+  const userData = getUserData()
+  const userEmail = userData?.email || ''
+  const firstName = userData?.name?.split(' ')[0] || ''
+
+  const amount = useMemo(() => {
+    const n = parseFloat(amountParam ?? '')
+    return Number.isFinite(n) && n > 0 ? n : null
+  }, [amountParam])
 
   // Redirect if not connected
   if (typeof window !== 'undefined' && !isConnected) {
@@ -78,7 +91,7 @@ function ConfirmWithdrawContent() {
     [networkId],
   )
 
-  if (!network || !networkId || !address) {
+  if (!network || !networkId || !address || amount === null) {
     return (
       <main className="mx-auto flex min-h-[calc(100vh-4rem)] max-w-lg flex-col gap-6 px-4 pb-8 pt-6 sm:px-6">
         <div className="mb-4">
@@ -87,7 +100,9 @@ function ConfirmWithdrawContent() {
         <p className="text-white/80">
           {!networkId
             ? 'Select a network first.'
-            : 'Please connect your wallet.'}
+            : amount === null
+              ? 'Enter a valid amount.'
+              : 'Please connect your wallet.'}
         </p>
         <button
           onClick={() =>
@@ -112,10 +127,71 @@ function ConfirmWithdrawContent() {
     }
   }
 
-  const handleConfirm = () => {
-    alert(
-      'Withdrawal initiated! This would trigger the actual transaction in a real implementation.',
-    )
+  const feeAmount = (amount * network.offrampFeePercent) / 100
+  const receiveAmount = amount - feeAmount
+
+  const handleSendCode = async () => {
+    if (!address || !network || amount === null) return
+
+    setIsSendingCode(true)
+    setError(null)
+
+    try {
+      // Calculate fees using the selected amount
+      const withdrawalAmount = amount
+      const offrampFeeAmount = feeAmount
+      const receiveAmountCalculated = receiveAmount
+
+      // Send confirmation code email
+      const response = await fetch('/api/send-withdraw-crypto-email', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          amount: withdrawalAmount,
+          currencyCode: 'USDC',
+          currencySymbol: '$',
+          feeAmount: offrampFeeAmount,
+          receiveAmount: receiveAmountCalculated,
+          networkName: network.name,
+          networkSymbol: network.symbol,
+          walletAddress: address,
+          gasFee: formatBalance(network.gasFee),
+          userEmail,
+          userName: firstName,
+        }),
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to send confirmation code')
+      }
+
+      // Redirect to confirmation code page
+      const params = new URLSearchParams({
+        amount: withdrawalAmount.toString(),
+        currencyCode: 'USDC',
+        currencySymbol: '$',
+        feeAmount: offrampFeeAmount.toString(),
+        receiveAmount: receiveAmount.toString(),
+        network: networkId,
+        networkName: network.name,
+        networkSymbol: network.symbol,
+        walletAddress: address,
+        gasFee: formatBalance(network.gasFee),
+      })
+
+      router.push(
+        `/select-destination/withdraw-crypto/confirm/code?${params.toString()}`,
+      )
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Error sending code')
+      console.error('Error sending code:', err)
+    } finally {
+      setIsSendingCode(false)
+    }
   }
 
   return (
@@ -131,6 +207,12 @@ function ConfirmWithdrawContent() {
           Review and confirm your cryptocurrency withdrawal.
         </p>
       </div>
+
+      {error && (
+        <div className="rounded-xl border border-red-500/50 bg-red-500/10 p-4">
+          <p className="text-sm text-red-400">{error}</p>
+        </div>
+      )}
 
       <section className="rounded-2xl border border-white/10 bg-white/5 p-5 sm:p-6">
         <h2 className="mb-4 text-sm font-medium text-white/80">
@@ -173,29 +255,35 @@ function ConfirmWithdrawContent() {
             </dd>
           </div>
           <div className="flex justify-between text-sm">
+            <dt className="text-white/60">Amount</dt>
+            <dd className="font-medium text-white">
+              ${formatBalance(amount)} USDC
+            </dd>
+          </div>
+          <div className="flex justify-between text-sm">
+            <dt className="text-white/60">
+              Offramp fee ({network.offrampFeePercent}%)
+            </dt>
+            <dd className="font-medium text-white">
+              ${formatBalance(feeAmount)}
+            </dd>
+          </div>
+          <div className="flex justify-between text-sm">
             <dt className="text-white/60">Network</dt>
             <dd className="font-medium text-white">{network.name}</dd>
           </div>
           <div className="border-t border-white/10 pt-3">
             <div className="mb-2 flex justify-between text-sm">
-              <dt className="text-white/60">Withdraw fee</dt>
+              <dt className="text-white/60">Gas fee (estimated)</dt>
               <dd className="font-medium text-white">
-                {network.offrampFeePercent}%
+                ~{formatBalance(network.gasFee)} {network.symbol}
               </dd>
             </div>
-            <div className="space-y-2 text-xs">
-              <div className="flex justify-between text-white/60">
-                <dt>Gas fee (estimated)</dt>
-                <dd className="font-medium text-white">
-                  ~{formatBalance(network.gasFee)} {network.symbol}
-                </dd>
-              </div>
-              <div className="flex justify-between text-white/60">
-                <dt>Offramp fee</dt>
-                <dd className="font-medium text-white">
-                  {network.offrampFeePercent}%
-                </dd>
-              </div>
+            <div className="flex justify-between text-sm">
+              <dt className="text-white/60 font-semibold">You receive</dt>
+              <dd className="font-semibold text-white">
+                ${formatBalance(receiveAmount)} USDC
+              </dd>
             </div>
           </div>
         </dl>
@@ -204,10 +292,11 @@ function ConfirmWithdrawContent() {
       <div className="mt-auto pt-4">
         <button
           type="button"
-          onClick={handleConfirm}
-          className="flex w-full items-center justify-center rounded-[27px] bg-brand-1 px-4 py-3.5 text-sm font-medium text-brand-5 transition-opacity hover:opacity-90"
+          onClick={handleSendCode}
+          disabled={isSendingCode}
+          className="flex w-full items-center justify-center rounded-[27px] bg-brand-1 px-4 py-3.5 text-sm font-medium text-brand-5 transition-opacity hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          Confirm Withdrawal
+          {isSendingCode ? 'Sending code...' : 'Send confirmation code'}
         </button>
       </div>
     </main>

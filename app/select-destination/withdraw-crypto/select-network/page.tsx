@@ -51,6 +51,7 @@ export default function SelectNetworkPage() {
   const router = useRouter()
   const { isConnected } = useAccount()
   const [selectedNetwork, setSelectedNetwork] = useState<string>('ethereum')
+  const [amount, setAmount] = useState('')
 
   // Redirect if not connected
   if (typeof window !== 'undefined' && !isConnected) {
@@ -63,11 +64,18 @@ export default function SelectNetworkPage() {
   }
 
   const selected = NETWORKS.find((n) => n.id === selectedNetwork)
+  const amountNum = parseFloat(amount) || 0
+  const isValidAmount =
+    amountNum > 0 && amountNum <= AVAILABLE_BALANCE_USDC
+
+  const handleMax = () => {
+    setAmount(String(AVAILABLE_BALANCE_USDC.toFixed(2)))
+  }
 
   const handleContinue = () => {
-    if (!selectedNetwork || !selected) return
+    if (!selectedNetwork || !selected || !isValidAmount) return
     router.push(
-      `/select-destination/withdraw-crypto/confirm?network=${selectedNetwork}`,
+      `/select-destination/withdraw-crypto/confirm?network=${selectedNetwork}&amount=${encodeURIComponent(amount.trim())}`,
     )
   }
 
@@ -118,6 +126,40 @@ export default function SelectNetworkPage() {
       </section>
 
       {selected && (
+        <section className="flex flex-col gap-3">
+          <h2 className="text-sm font-medium text-white/80">Amount</h2>
+          <div className="flex gap-2">
+            <div className="relative flex flex-1 items-center">
+              <span className="absolute left-4 text-lg text-white/60">$</span>
+              <input
+                type="number"
+                inputMode="decimal"
+                min={0}
+                step="0.01"
+                placeholder="0.00"
+                value={amount}
+                onChange={(e) => setAmount(e.target.value)}
+                className="w-full rounded-xl border border-white/10 bg-white/5 py-3.5 pl-10 pr-4 text-lg text-white placeholder:text-white/40 focus:border-brand-1 focus:outline-none focus:ring-1 focus:ring-brand-1"
+                aria-label="Withdrawal amount"
+              />
+            </div>
+            <button
+              type="button"
+              onClick={handleMax}
+              className="rounded-xl border border-brand-1 bg-brand-1/10 px-4 py-3 text-sm font-medium text-brand-1 transition-colors hover:bg-brand-1/20"
+            >
+              Max
+            </button>
+          </div>
+          {amountNum > AVAILABLE_BALANCE_USDC && (
+            <p className="text-sm text-red-400">
+              Amount exceeds available balance.
+            </p>
+          )}
+        </section>
+      )}
+
+      {selected && (
         <section className="rounded-2xl border border-white/10 bg-white/5 p-5 sm:p-6">
           <h2 className="mb-3 text-sm font-medium text-white/80">
             Network Information
@@ -147,7 +189,7 @@ export default function SelectNetworkPage() {
         <button
           type="button"
           onClick={handleContinue}
-          disabled={!selectedNetwork}
+          disabled={!selectedNetwork || !isValidAmount}
           className="flex w-full items-center justify-center rounded-[27px] bg-brand-1 px-4 py-3.5 text-sm font-medium text-brand-5 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed hover:enabled:opacity-90"
         >
           Continue to confirm
