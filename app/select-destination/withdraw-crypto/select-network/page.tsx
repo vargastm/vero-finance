@@ -65,8 +65,7 @@ export default function SelectNetworkPage() {
 
   const selected = NETWORKS.find((n) => n.id === selectedNetwork)
   const amountNum = parseFloat(amount) || 0
-  const isValidAmount =
-    amountNum > 0 && amountNum <= AVAILABLE_BALANCE_USDC
+  const isValidAmount = amountNum > 0 && amountNum <= AVAILABLE_BALANCE_USDC
 
   const handleMax = () => {
     setAmount(String(AVAILABLE_BALANCE_USDC.toFixed(2)))
