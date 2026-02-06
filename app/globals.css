@@ -6,11 +6,12 @@
 }
 
 :root {
-  --background: #080d15;
+  --background: #050b12;
   --foreground: #ededed;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
+  font-family: var(--font-manrope), system-ui, -apple-system, sans-serif;
 }

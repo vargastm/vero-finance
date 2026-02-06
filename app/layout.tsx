@@ -1,10 +1,17 @@
 import './globals.css'
 
 import type { Metadata } from 'next'
+import { Manrope } from 'next/font/google'
 import React from 'react'
 
 import { ConditionalHeader } from './components/ConditionalHeader'
 import { Providers } from './providers'
+
+const manrope = Manrope({
+  subsets: ['latin'],
+  variable: '--font-manrope',
+  display: 'swap',
+})
 
 export const metadata: Metadata = {
   title: 'Vero Finance',
@@ -23,7 +30,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body>
+      <body className={manrope.variable}>
         <Providers>
           <ConditionalHeader />
           {children}
